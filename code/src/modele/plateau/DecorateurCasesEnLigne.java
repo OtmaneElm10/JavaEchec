@@ -34,6 +34,8 @@ public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
     }
 
     private void verifierDirection(Point depart, int deltaX, int deltaY, ArrayList<Case> destinationsPossibles) {
+        
+        //prendre en compte que le roi se déplace d'une case 
         int maxEtapes = (piece instanceof modele.jeu.Roi) ? 1 : 7;
 
         for (int etape = 1; etape <= maxEtapes; etape++) {
@@ -60,7 +62,7 @@ public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
                     break; // bloqué par  aalie
                 }
             } else {
-                
+
                 break; // hors du plateau
             }
         }

@@ -33,6 +33,9 @@ public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
         return casesPossibles;
     }
 
+    //focntion privé qui perment de détecter les obstacle elle nous perment de savoir si le déplacement est ok 
+    //si on est pas en bord du plateau ou si il y a une autre piece qui nous bloque etc ...
+    
     private void verifierDirection(Point depart, int deltaX, int deltaY, ArrayList<Case> destinationsPossibles) {
         
         //prendre en compte que le roi se déplace d'une case 

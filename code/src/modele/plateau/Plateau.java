@@ -69,7 +69,7 @@ public class Plateau extends Observable {
 
     }
 
-    public Point getPosition_Case(Case case) {
+    public Point getPositionCase(Case case) {
         return map.get(c);
     }
     

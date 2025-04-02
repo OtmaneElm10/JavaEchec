@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public abstract class DecorateurCasesAccessibles {
 
-    Plateau plateau; // TODO
-    Piece piece; // TODO
+     protected Plateau plateau; 
+     protected Piece piece; // on place en protected pour pouvoir y acceder dans les sous classes mais pas public 
 
     private DecorateurCasesAccessibles base;
 

@@ -69,6 +69,10 @@ public class Plateau extends Observable {
 
     }
 
+    public Point getPosition_Case(Case case) {
+        return map.get(c);
+    }
+    
 
     /** Indique si p est contenu dans la grille
      */

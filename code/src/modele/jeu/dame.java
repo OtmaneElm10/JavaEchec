@@ -10,13 +10,13 @@ import modele.plateau.*;
 import java.util.ArrayList;
 
 
-public class Fou extends Piece
+public class Dame extends Piece
 {
-    public Fou(Plateau _plateau) {
+    public Dame(Plateau _plateau) {
         super(_plateau);
-        casesAccessibles = new DecorateurCasesEnDiagonale(null);
+        casesAccessibles = new DecorateurCasesEnLigne(new DecorateurCasesEnDiagonale(null));
 
-        // le décorateur récupère les cases en diagonale 
+        // le décorateur récupère les cases en diagonale et en ligne
         // ArrayList<Case> lst = casesAccessibles.getCasesAccessibles();
 
     }

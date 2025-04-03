@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
 
-    public DecorateurCasesEnDiagonale(DecorateurCasesAccessibles _baseDecorateur) {
-        super(_baseDecorateur);
+    public DecorateurCasesEnDiagonale(DecorateurCasesAccessibles base, Plateau plateau, Piece piece, int limiteur) {
+        super(base, plateau, piece, limiteur);
     }
 
     @Override

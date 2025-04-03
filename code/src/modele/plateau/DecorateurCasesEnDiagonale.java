@@ -25,12 +25,12 @@ public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
             return casesAccessibles;
         }
 
-        // Appel des directions diagonales 
+        // directions 
 
-        verifierDiagonale(coordDepart, -1, -1, casesAccessibles); // ↖
-        verifierDiagonale(coordDepart, 1, -1, casesAccessibles);  // ↗
-        verifierDiagonale(coordDepart, -1, 1, casesAccessibles);  // ↙
-        verifierDiagonale(coordDepart, 1, 1, casesAccessibles);   // ↘
+        verifierDiagonale(coordDepart, -1, -1, casesAccessibles); // haut gauche 
+        verifierDiagonale(coordDepart, 1, -1, casesAccessibles);  // haut droit 
+        verifierDiagonale(coordDepart, -1, 1, casesAccessibles);  // bas gauche
+        verifierDiagonale(coordDepart, 1, 1, casesAccessibles);   // bas droit
 
         return casesAccessibles;
     }

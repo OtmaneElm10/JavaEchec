@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
 
-    public DecorateurCasesEnLigne(DecorateurCasesAccessibles _baseDecorateur) {
-        super(_baseDecorateur);
+    public DecorateurCasesEnLigne(DecorateurCasesAccessibles base, Plateau plateau, Piece piece, int limiteur) {
+        super(base, plateau, piece, limiteur);
     }
 
     @Override
@@ -37,37 +37,26 @@ public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
     //si on est pas en bord du plateau ou si il y a une autre piece qui nous bloque etc ...
     
     private void verifierDirection(Point depart, int deltaX, int deltaY, ArrayList<Case> destinationsPossibles) {
-        
-        //prendre en compte que le roi se déplace d'une case 
-        int maxEtapes = (piece instanceof modele.jeu.Roi) ? 1 : 7;
 
-        for (int etape = 1; etape <= maxEtapes; etape++) {
-
+        for (int etape = 1; etape <= limiteur; etape++) {
+    
             int coordX = depart.x + deltaX * etape;
             int coordY = depart.y + deltaY * etape;
-
-
+    
             if (coordX >= 0 && coordX < Plateau.SIZE_X && coordY >= 0 && coordY < Plateau.SIZE_Y) {
                 Case caseCandidate = plateau.getCases()[coordX][coordY];
-
+    
                 if (caseCandidate.getPiece() == null) {
-
                     destinationsPossibles.add(caseCandidate);
-
                 } else if (caseCandidate.getPiece().estBlanc() != piece.estBlanc()) {
-
                     destinationsPossibles.add(caseCandidate);
-
-                    break; // bloque après prise
-
+                    break;
                 } else {
-
-                    break; // bloqué par  aalie
+                    break;
                 }
             } else {
-
-                break; // hors du plateau
+                break;
             }
         }
     }
-}
+}    

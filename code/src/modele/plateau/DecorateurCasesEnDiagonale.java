@@ -37,10 +37,8 @@ public class DecorateurCasesEnDiagonale extends DecorateurCasesAccessibles {
 
     private void verifierDiagonale(Point coordDepart, int dx, int dy, ArrayList<Case> casesAccessibles) {
         
-        //ici meme cas que decorateur ajouter en ligne pour le roi 
-        int maxPas = (piece instanceof modele.jeu.Roi) ? 1 : 7;
-
-        for (int pas = 1; pas <= maxPas; pas++) {
+       
+        for (int pas = 1; pas <= limiteur; pas++) {
             int x = coordDepart.x + dx * pas;
             int y = coordDepart.y + dy * pas;
 

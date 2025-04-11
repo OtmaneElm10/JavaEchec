@@ -7,8 +7,6 @@ package modele.jeu;
 
 import modele.plateau.*;
 
-import java.util.ArrayList;
-
 
 public class Dame extends Piece {
 

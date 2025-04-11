@@ -10,16 +10,14 @@ import modele.plateau.*;
 import java.util.ArrayList;
 
 
-public class Roi extends Piece
-{
-    public Roi(Plateau _plateau) {
-        super(_plateau);
-        casesAccessibles = new DecorateurCasesEnLigne(new DecorateurCasesEnDiagonale(null));
+public class Roi extends Piece {
 
-        // le décorateur récupère les cases en diagonale et en ligne
-        // ArrayList<Case> lst = casesAccessibles.getCasesAccessibles();
+    public Roi(Plateau plateau, boolean est_blanc) {
+        super(plateau, est_blanc);
 
+        casesAccessibles = new DecorateurCasesEnLigne(
+            new DecorateurCasesEnDiagonale(null, plateau, this, 1),
+            plateau, this, 1
+        );
     }
-
-
 }

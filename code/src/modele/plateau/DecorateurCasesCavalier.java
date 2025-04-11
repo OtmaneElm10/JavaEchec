@@ -36,7 +36,7 @@ public class DecorateurCasesCavalier extends DecorateurCasesAccessibles {
     }
 
     @Override
-    public List<Case> getMesCasesAccessibles() {
+    public List <Case> getMesCasesAccessibles() {
         List<Case> casesAccessibles = new ArrayList<>();
 
         //si probl init 

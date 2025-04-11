@@ -28,6 +28,8 @@ public class VueControleur extends JFrame implements Observer {
     private final int sizeX; // taille de la grille affichée
     private final int sizeY;
     private static final int pxCase = 50; // nombre de pixel par case
+    private java.util.Map<String, ImageIcon> icones = new java.util.HashMap<>();
+
     // icones affichées dans la grille
     private ImageIcon icoRoi;
 
@@ -57,9 +59,14 @@ public class VueControleur extends JFrame implements Observer {
 
 
     private void chargerLesIcones() {
-        icoRoi = chargerIcone("Images/wK.png");
-
-
+        String[] noms = {
+            "wK", "wQ", "wR", "wB", "wN", "wP",  // pièces blanches
+            "bK", "bQ", "bR", "bB", "bN", "bP"   // pièces noires
+        };
+    
+        for (String nom : noms) {
+            icones.put(nom, chargerIcone("../Images/" + nom + ".png"));
+        }
     }
 
     private ImageIcon chargerIcone(String urlIcone) {
@@ -140,16 +147,12 @@ public class VueControleur extends JFrame implements Observer {
 
                     Piece e = c.getPiece();
 
-                    if (e!= null) {
-                        if (c.getPiece() instanceof Roi) {
-
-                            tabJLabel[x][y].setIcon(icoRoi);
-
-                        }
+                    if (e != null) {
+                        tabJLabel[x][y].setIcon(getIconForPiece(e));
                     } else {
                         tabJLabel[x][y].setIcon(null);
-
                     }
+                    
 
 
                 }
@@ -176,4 +179,21 @@ public class VueControleur extends JFrame implements Observer {
         */
 
     }
+
+
+    private ImageIcon getIconForPiece(Piece piece) {
+        String couleur = piece.estBlanc() ? "w" : "b";
+        String nom = piece.getClass().getSimpleName();
+    
+        switch (nom) {
+            case "Roi": return icones.get(couleur + "K");
+            case "Dame": return icones.get(couleur + "Q");
+            case "Tour": return icones.get(couleur + "R");
+            case "Fou": return icones.get(couleur + "B");
+            case "Cavalier": return icones.get(couleur + "N");
+            case "Pion": return icones.get(couleur + "P");
+            default: return null;
+        }
+    }
+    
 }

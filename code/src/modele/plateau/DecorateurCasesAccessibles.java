@@ -3,6 +3,7 @@ package modele.plateau;
 import modele.jeu.Piece;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DecorateurCasesAccessibles {
 
@@ -21,17 +22,17 @@ public abstract class DecorateurCasesAccessibles {
     }
 
 
-    public ArrayList<Case> getCasesAccessibles() {
-        ArrayList<Case> retour = getMesCasesAccessibles();
-
+    public  List<Case> getCasesAccessibles() {
+        List<Case> retour = getMesCasesAccessibles();
+    
         if (base != null) {
             retour.addAll(base.getCasesAccessibles());
         }
-
+    
         return retour;
     }
 
-    public abstract ArrayList<Case> getMesCasesAccessibles();
+    public abstract List<Case> getMesCasesAccessibles();
 
 
 }

@@ -7,6 +7,7 @@ package modele.plateau;
 
 
 import modele.jeu.Piece;
+import modele.jeu.Pion;
 import modele.jeu.Roi;
 
 import java.awt.Point;
@@ -44,14 +45,17 @@ public class Plateau extends Observable {
     }
 
     public void placerPieces() {
-        Roi roi = new Roi(this);
-        Case cR = grilleCases[4][7];
-        roi.allerSurCase(cR);
+    Roi roiBlanc = new Roi(this, true);
+    Case cR = grilleCases[4][7];
+    roiBlanc.allerSurCase(cR);
 
-        setChanged();
-        notifyObservers();
+    Pion pionNoir = new Pion(this, false);
+    Case cP = grilleCases[4][1];
+    pionNoir.allerSurCase(cP);
 
-    }
+    setChanged();
+    notifyObservers();
+}
 
     public void arriverCase(Case c, Piece p) {
 
@@ -69,7 +73,7 @@ public class Plateau extends Observable {
 
     }
 
-    public Point getPositionCase(Case case) {
+    public Point getPositionCase(Case c) {
         return map.get(c);
     }
     

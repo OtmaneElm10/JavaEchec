@@ -3,6 +3,7 @@ package modele.plateau;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import modele.jeu.Piece;
 
 //crea deco
 public class DecorateurCasesCavalier extends DecorateurCasesAccessibles {

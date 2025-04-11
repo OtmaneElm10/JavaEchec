@@ -1,6 +1,7 @@
 package modele.jeu;
 
 import modele.plateau.*;
+import modele.jeu.Piece;
 
 public class Cavalier extends Piece {
 

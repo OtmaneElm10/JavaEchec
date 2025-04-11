@@ -4,14 +4,10 @@ import modele.plateau.*;
 
 public class Pion extends Piece {
 
-    public Pion(Plateau _plateau, boolean _estBlanc) {
-        
-        super(_plateau, _estBlanc);
+    public Pion(Plateau plateau, boolean estBlanc) {
+        super(plateau, estBlanc);
 
-        casesAccessibles = new DecorateurCasesPion(null);
-
-        asesAccessibles.plateau = _plateau;
-        casesAccessibles.piece = this;
-        
+        // On respecte la structure du décorateur
+        casesAccessibles = new DecorateurCasesPion(null, plateau, this);
     }
 }

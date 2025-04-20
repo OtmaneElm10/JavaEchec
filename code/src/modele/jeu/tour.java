@@ -17,3 +17,5 @@ public class Tour extends Piece {
         casesAccessibles = new DecorateurCasesEnLigne(null, plateau, this, -1);
     }
 }
+
+

@@ -81,11 +81,13 @@ public class Plateau extends Observable {
 }
 
 
-    public void arriverCase(Case c, Piece p) {
-
-        c.p = p;
-
+public void arriverCase(Case c, Piece p) {
+    if (c.getPiece() != null) {
+        // Il y a une pièce ennemie à prendre
+        // Tu peux l'enlever du jeu, ou l'ajouter dans une liste des pièces capturées si tu veux l'afficher
     }
+    c.p = p;
+}
 
     public void deplacerPiece(Case c1, Case c2) {
         if (c1.p != null) {

@@ -3,6 +3,10 @@ package modele.jeu;
 import modele.plateau.Case;
 import modele.plateau.Plateau;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 import javax.print.event.PrintJobEvent;
 
 public class Jeu extends Thread{
@@ -45,8 +49,16 @@ public class Jeu extends Thread{
 
 
     public void appliquerCoup(Coup coup) {
-        plateau.deplacerPiece(coup.dep, coup.arr);
+    if (coup.dep.getPiece() != null) {
+        List<Case> casesPossibles = coup.dep.getPiece().casesAccessibles.getCasesAccessibles();
+        if (casesPossibles.contains(coup.arr)) {
+            // Si la destination est accessible, on applique le coup
+            plateau.deplacerPiece(coup.dep, coup.arr);
+        } else {
+            System.out.println("Coup invalide !");
+        }
     }
+}
 
     public void run() {
         jouerPartie();

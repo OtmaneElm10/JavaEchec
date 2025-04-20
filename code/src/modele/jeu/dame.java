@@ -7,19 +7,15 @@ package modele.jeu;
 
 import modele.plateau.*;
 
-import java.util.ArrayList;
 
+public class Dame extends Piece {
 
-public class Dame extends Piece
-{
-    public Dame(Plateau _plateau) {
-        super(_plateau);
-        casesAccessibles = new DecorateurCasesEnLigne(new DecorateurCasesEnDiagonale(null));
-
-        // le décorateur récupère les cases en diagonale et en ligne
-        // ArrayList<Case> lst = casesAccessibles.getCasesAccessibles();
-
+    public Dame(Plateau plateau, boolean est_blanc) {
+        super(plateau, est_blanc);
+        casesAccessibles = new DecorateurCasesEnLigne(
+            new DecorateurCasesEnDiagonale(null, plateau, this, -1),
+            plateau, this, -1
+        );
     }
-
-
 }
+

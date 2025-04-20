@@ -1,7 +1,6 @@
 
 import VueControleur.VueControleur;
 import modele.jeu.Jeu;
-import modele.plateau.Plateau;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -10,12 +9,10 @@ import modele.plateau.Plateau;
  */
 
 
-public class Main {
+ public class Main {
     public static void main(String[] args) {
         Jeu jeu = new Jeu();
-        
         VueControleur vc = new VueControleur(jeu);
-        vc.setVisible(true);
-
+        vc.setVisible(true); // ← indispensable pour que la fenêtre apparaisse
     }
 }

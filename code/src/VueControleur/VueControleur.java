@@ -1,179 +1,164 @@
 package VueControleur;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.*;
-
-
-import modele.jeu.Coup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import modele.jeu.Jeu;
-import modele.plateau.Case;
 import modele.jeu.Piece;
-import modele.jeu.Roi;
+import modele.jeu.Coup; // N'oublie pas d'importer Coup si pas déjà
+import modele.plateau.Case;
 import modele.plateau.Plateau;
 
-
-/** Cette classe a deux fonctions :
- *  (1) Vue : proposer une représentation graphique de l'application (cases graphiques, etc.)
- *  (2) Controleur : écouter les évènements clavier et déclencher le traitement adapté sur le modèle (clic position départ -> position arrivée pièce))
- *
- */
 public class VueControleur extends JFrame implements Observer {
-    private Plateau plateau; // référence sur une classe de modèle : permet d'accéder aux données du modèle pour le rafraichissement, permet de communiquer les actions clavier (ou souris)
+    private Plateau plateau;
     private Jeu jeu;
-    private final int sizeX; // taille de la grille affichée
+    private final int sizeX;
     private final int sizeY;
-    private static final int pxCase = 50; // nombre de pixel par case
-    // icones affichées dans la grille
-    private ImageIcon icoRoi;
-
-    private Case caseClic1; // mémorisation des cases cliquées
+    private static final int pxCase = 50;
+    private Map<String, ImageIcon> icones = new HashMap<>();
+    private Case caseClic1;
     private Case caseClic2;
+    private JLabel[][] tabJLabel;
 
-
-    private JLabel[][] tabJLabel; // cases graphique (au moment du rafraichissement, chaque case va être associée à une icône, suivant ce qui est présent dans le modèle)
-
-
-    public VueControleur(Jeu _jeu) {
-        jeu = _jeu;
-        plateau = jeu.getPlateau();
-        sizeX = plateau.SIZE_X;
-        sizeY = plateau.SIZE_Y;
-
-
-
-        chargerLesIcones();
-        placerLesComposantsGraphiques();
-
-        plateau.addObserver(this);
-
-        mettreAJourAffichage();
-
+    public VueControleur(Jeu jeu) {
+        this.jeu = jeu;
+        this.plateau = this.jeu.getPlateau();
+        this.sizeX = 8;
+        this.sizeY = 8;
+        this.chargerLesIcones();
+        this.placerLesComposantsGraphiques();
+        this.plateau.addObserver(this);
+        this.mettreAJourAffichage();
     }
-
 
     private void chargerLesIcones() {
-        icoRoi = chargerIcone("Images/wK.png");
+        String[] pieces = new String[]{"wK", "wQ", "wR", "wB", "wN", "wP", "bK", "bQ", "bR", "bB", "bN", "bP"};
 
-
+        for (String p : pieces) {
+            this.icones.put(p, this.chargerIcone("../Images/" + p + ".png"));
+        }
     }
 
-    private ImageIcon chargerIcone(String urlIcone) {
-        BufferedImage image = null;
-
-        ImageIcon icon = new ImageIcon(urlIcone);
-
-        // Redimensionner l'icône
-        Image img = icon.getImage().getScaledInstance(pxCase, pxCase, Image.SCALE_SMOOTH);
-        ImageIcon resizedIcon = new ImageIcon(img);
-
-        return resizedIcon;
+    private ImageIcon chargerIcone(String path) {
+        ImageIcon icon = new ImageIcon(path);
+        Image image = icon.getImage().getScaledInstance(pxCase, pxCase, Image.SCALE_SMOOTH);
+        return new ImageIcon(image);
     }
 
     private void placerLesComposantsGraphiques() {
-        setTitle("Jeu d'Échecs");
-        setResizable(false);
-        setSize(sizeX * pxCase, sizeX * pxCase);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // permet de terminer l'application à la fermeture de la fenêtre
+        this.setTitle("Jeu d'Échecs");
+        this.setResizable(false);
+        this.setSize(this.sizeX * pxCase, this.sizeY * pxCase);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        JComponent grilleJLabels = new JPanel(new GridLayout(sizeY, sizeX)); // grilleJLabels va contenir les cases graphiques et les positionner sous la forme d'une grille
+        JPanel panel = new JPanel(new GridLayout(this.sizeY, this.sizeX));
+        this.tabJLabel = new JLabel[this.sizeX][this.sizeY];
 
-
-        tabJLabel = new JLabel[sizeX][sizeY];
-
-        for (int y = 0; y < sizeY; y++) {
-            for (int x = 0; x < sizeX; x++) {
-                JLabel jlab = new JLabel();
-
-                tabJLabel[x][y] = jlab; // on conserve les cases graphiques dans tabJLabel pour avoir un accès pratique à celles-ci (voir mettreAJourAffichage() )
-
-                final int xx = x; // permet de compiler la classe anonyme ci-dessous
-                final int yy = y;
-                // écouteur de clics
-                jlab.addMouseListener(new MouseAdapter() {
+        for (int y = 0; y < this.sizeY; y++) {
+            for (int x = 0; x < this.sizeX; x++) {
+                JLabel label = new JLabel();
+                this.tabJLabel[x][y] = label;
+                
+                // Correction ici : ajout d'un vrai écouteur de clic
+                int finalX = x;
+                int finalY = y;
+                label.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-
-                        if (caseClic1 == null) {
-                            caseClic1 = plateau.getCases()[xx][yy];
-                        } else {
-                            caseClic2 = plateau.getCases()[xx][yy];
-                            jeu.envoyerCoup(new Coup(caseClic1, caseClic2));
-                            caseClic1 = null;
-                            caseClic2 = null;
-                        }
-
+                        caseClicked(finalX, finalY);
                     }
                 });
 
-
-                jlab.setOpaque(true);
-
-                if ((y%2 == 0 && x%2 == 0) || (y%2 != 0 && x%2 != 0)) {
-                    tabJLabel[x][y].setBackground(new Color(50, 50, 110));
+                label.setOpaque(true);
+                if ((y % 2 != 0 || x % 2 != 0) && (y % 2 == 0 || x % 2 == 0)) {
+                    label.setBackground(new Color(150, 150, 210)); // Case claire
                 } else {
-                    tabJLabel[x][y].setBackground(new Color(150, 150, 210));
+                    label.setBackground(new Color(50, 50, 110)); // Case foncée
                 }
 
-                grilleJLabels.add(jlab);
+                panel.add(label);
             }
         }
-        add(grilleJLabels);
+
+        this.add(panel);
     }
 
-    
-    /**
-     * Il y a une grille du côté du modèle ( jeu.getGrille() ) et une grille du côté de la vue (tabJLabel)
-     */
     private void mettreAJourAffichage() {
-
-        for (int x = 0; x < sizeX; x++) {
-            for (int y = 0; y < sizeY; y++) {
-
-                Case c = plateau.getCases()[x][y];
-
+        for (int x = 0; x < this.sizeX; x++) {
+            for (int y = 0; y < this.sizeY; y++) {
+                Case c = this.plateau.getCases()[x][y];
                 if (c != null) {
-
-                    Piece e = c.getPiece();
-
-                    if (e!= null) {
-                        if (c.getPiece() instanceof Roi) {
-
-                            tabJLabel[x][y].setIcon(icoRoi);
-
-                        }
+                    Piece p = c.getPiece();
+                    if (p != null) {
+                        this.tabJLabel[x][y].setIcon(this.getIconForPiece(p));
                     } else {
-                        tabJLabel[x][y].setIcon(null);
-
+                        this.tabJLabel[x][y].setIcon((Icon) null);
                     }
-
-
                 }
-
             }
         }
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        mettreAJourAffichage();
-        /*
+        this.mettreAJourAffichage();
+    }
 
-        // récupérer le processus graphique pour rafraichir
-        // (normalement, à l'inverse, a l'appel du modèle depuis le contrôleur, utiliser un autre processus, voir classe Executor)
+    private ImageIcon getIconForPiece(Piece p) {
+        String color = p.estBlanc() ? "w" : "b";
 
+        switch (p.getClass().getSimpleName()) {
+            case "Roi":
+                return this.icones.get(color + "K");
+            case "Dame":
+                return this.icones.get(color + "Q");
+            case "Tour":
+                return this.icones.get(color + "R");
+            case "Fou":
+                return this.icones.get(color + "B");
+            case "Cavalier":
+                return this.icones.get(color + "N");
+            case "Pion":
+                return this.icones.get(color + "P");
+            default:
+                return null;
+        }
+    }
 
-        SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        mettreAJourAffichage();
-                    }
-                }); 
-        */
+    // Nouvelle méthode qui gère les clics
+    private void caseClicked(int x, int y) {
+        Case caseCliquee = plateau.getCases()[x][y];
 
+        if (caseClic1 == null) {
+            // Premier clic : sélection d'une pièce
+            if (caseCliquee != null && caseCliquee.getPiece() != null) {
+                caseClic1 = caseCliquee;
+                System.out.println("Sélectionné : " + caseCliquee.getPiece().getClass().getSimpleName() + " (" + x + "," + y + ")");
+            }
+        } else {
+            // Deuxième clic : tentative de déplacement
+            caseClic2 = caseCliquee;
+
+            if (caseClic2 != null) {
+                jeu.envoyerCoup(new Coup(caseClic1, caseClic2));
+                System.out.println("Coup envoyé de " + caseClic1 + " à " + caseClic2);
+            }
+
+            // Réinitialisation pour un nouveau tour
+            caseClic1 = null;
+            caseClic2 = null;
+        }
     }
 }

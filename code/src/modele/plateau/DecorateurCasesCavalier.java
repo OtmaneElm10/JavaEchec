@@ -3,39 +3,37 @@ package modele.plateau;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import modele.jeu.Piece;
 
 //crea deco
 public class DecorateurCasesCavalier extends DecorateurCasesAccessibles {
 
     //enum des direction en L
     private enum Direction {
-        
-        HAUT_droite(2, 1),
-        HAUT_gauche(-2, 1),
-        BAS_droite(2, -1),
-        BAS_gauche(-2, -1),
-        DROITE_haut(1, 2),
-        DROITE_bas(1, -2),
-        GAUCHE_bas(-1, -2),
-        GAUCHE_haut(-1, 2);
-        
-        //utilisation de final par secu equiv const en c++
-        // coordonné de deplacement 
+        HAUT_DROITE(1, -2),
+        HAUT_GAUCHE(-1, -2),
+        DROITE_HAUT(2, -1),
+        DROITE_BAS(2, 1),
+        BAS_DROITE(1, 2),
+        BAS_GAUCHE(-1, 2),
+        GAUCHE_HAUT(-2, -1),
+        GAUCHE_BAS(-2, 1);
+    
         final int dx, dy;
-
-        //construit les direction avec décalage 
+    
         Direction(int dx, int dy) {
             this.dx = dx;
             this.dy = dy;
         }
     }
+    
 
     public DecorateurCasesCavalier(DecorateurCasesAccessibles base, Plateau plateau, Piece piece, int limiteur) {
         super(base, plateau, piece, limiteur); // même si limiteur n’est pas utilisé
     }
 
     @Override
-    public List<Case> getMesCasesAccessibles() {
+    public List <Case> getMesCasesAccessibles() {
         List<Case> casesAccessibles = new ArrayList<>();
 
         //si probl init 

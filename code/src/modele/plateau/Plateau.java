@@ -6,8 +6,8 @@
 package modele.plateau;
 
 
-import modele.jeu.Piece;
-import modele.jeu.Roi;
+import modele.jeu.*;
+
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -43,21 +43,51 @@ public class Plateau extends Observable {
 
     }
 
-    public void placerPieces() {
-        Roi roi = new Roi(this);
-        Case cR = grilleCases[4][7];
-        roi.allerSurCase(cR);
-
-        setChanged();
-        notifyObservers();
-
+  public void placerPieces() {
+    // Pions blancs (rangée 6)
+    for (int x = 0; x < SIZE_X; x++) {
+        Pion pionBlanc = new Pion(this, true);
+        pionBlanc.allerSurCase(grilleCases[x][6]);
     }
 
-    public void arriverCase(Case c, Piece p) {
-
-        c.p = p;
-
+    // Pions noirs (rangée 1)
+    for (int x = 0; x < SIZE_X; x++) {
+        Pion pionNoir = new Pion(this, false);
+        pionNoir.allerSurCase(grilleCases[x][1]);
     }
+
+    // Pièces blanches (rangée 7)
+    new Tour(this, true).allerSurCase(grilleCases[0][7]);
+    new Cavalier(this, true).allerSurCase(grilleCases[1][7]);
+    new Dame(this, true).allerSurCase(grilleCases[3][7]);
+    new Roi(this, true).allerSurCase(grilleCases[4][7]);
+    new Fou(this, true).allerSurCase(grilleCases[5][7]);
+    new Fou(this, true).allerSurCase(grilleCases[2][7]);
+    new Cavalier(this, true).allerSurCase(grilleCases[6][7]);
+    new Tour(this, true).allerSurCase(grilleCases[7][7]);
+
+    // Pièces noires (rangée 0)
+    new Tour(this, false).allerSurCase(grilleCases[0][0]);
+    new Cavalier(this, false).allerSurCase(grilleCases[1][0]);
+    new Fou(this, false).allerSurCase(grilleCases[2][0]);
+    new Dame(this, false).allerSurCase(grilleCases[3][0]);
+    new Roi(this, false).allerSurCase(grilleCases[4][0]);
+    new Fou(this, false).allerSurCase(grilleCases[5][0]);
+    new Cavalier(this, false).allerSurCase(grilleCases[6][0]);
+    new Tour(this, false).allerSurCase(grilleCases[7][0]);
+
+    // Notifie les observateurs pour que la vue se mette à jour
+ 
+}
+
+
+public void arriverCase(Case c, Piece p) {
+    if (c.getPiece() != null) {
+        // Il y a une pièce ennemie à prendre
+        // Tu peux l'enlever du jeu, ou l'ajouter dans une liste des pièces capturées si tu veux l'afficher
+    }
+    c.p = p;
+}
 
     public void deplacerPiece(Case c1, Case c2) {
         if (c1.p != null) {
@@ -69,7 +99,7 @@ public class Plateau extends Observable {
 
     }
 
-    public Point getPositionCase(Case case) {
+    public Point getPositionCase(Case c) {
         return map.get(c);
     }
     

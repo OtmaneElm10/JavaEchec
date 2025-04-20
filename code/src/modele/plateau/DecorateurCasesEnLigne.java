@@ -1,6 +1,9 @@
 package modele.plateau;
 
 import java.util.ArrayList;
+import modele.jeu.Piece;
+import java.awt.Point;
+
 
 public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
 
@@ -38,7 +41,7 @@ public class DecorateurCasesEnLigne extends DecorateurCasesAccessibles {
     
     private void verifierDirection(Point depart, int deltaX, int deltaY, ArrayList<Case> destinationsPossibles) {
 
-        for (int etape = 1; etape <= limiteur; etape++) {
+        for (int etape = 1; limiteur == -1 || etape <= limiteur; etape++) {
     
             int coordX = depart.x + deltaX * etape;
             int coordY = depart.y + deltaY * etape;

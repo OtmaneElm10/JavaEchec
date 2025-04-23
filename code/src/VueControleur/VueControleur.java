@@ -230,6 +230,10 @@ private void reinitialiserCouleurs() {
     }
 }
 
+public void afficherMessage(String message) {
+    javax.swing.JOptionPane.showMessageDialog(this, message);
+}
+
 
     
 }

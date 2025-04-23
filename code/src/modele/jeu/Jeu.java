@@ -7,10 +7,13 @@ import java.awt.Point;
 
 import java.util.List;
 
+import VueControleur.VueControleur;
+
 public class Jeu extends Thread {
     private Plateau plateau;
     private Joueur j1;
     private Joueur j2;
+    private VueControleur vue;
     protected Coup coupRecu;
     private boolean tourBlanc = true; 
 
@@ -156,6 +159,10 @@ public class Jeu extends Thread {
             }
         }
         return null;
+    }
+
+    public void setVue(VueControleur vue) {
+        this.vue = vue;
     }
 
 

@@ -13,8 +13,8 @@ public class Dame extends Piece {
     public Dame(Plateau plateau, boolean est_blanc) {
         super(plateau, est_blanc);
         casesAccessibles = new DecorateurCasesEnLigne(
-            new DecorateurCasesEnDiagonale(null, plateau, this, -1),
-            plateau, this, -1
+            new DecorateurCasesEnDiagonale(null, plateau, this, Plateau.SIZE_X),
+            plateau, this, Plateau.SIZE_X
         );
     }
 }

@@ -35,4 +35,8 @@ public class Case {
 
     }*/
 
+    public void setPiece(Piece _p) {
+        this.p = _p;
+    }
+
    }

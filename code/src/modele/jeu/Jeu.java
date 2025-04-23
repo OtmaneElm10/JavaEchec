@@ -82,9 +82,17 @@ public class Jeu extends Thread {
     
                     System.out.println("Coup interdit : vous restez en échec !");
                 } else {
-                    // 6. Coup valide : applique réellement le coup
+                    //Coup valide : applique réellement le coup
                     plateau.deplacerPiece(caseDepart, caseArrivee);
                     changerTour(); // alterne entre tourBlanc = true/false
+                    if (estEgalite(tourBlanc)) {
+                        if (vue != null) {
+                            vue.afficherMessage("Égalité (pat) !");
+                        } else {
+                            System.out.println("Égalité (pat) !");
+                        }
+                    }
+                    
                     System.out.println("Coup joué !");
                 }
             } else {
@@ -165,5 +173,23 @@ public class Jeu extends Thread {
         this.vue = vue;
     }
 
+    public boolean estEgalite(boolean joueurBlanc) {
+        if (estEnEchec(joueurBlanc)) return false; // pas une égalité si en échec
+    
+        // Parcourt toutes les pièces du joueur
+        for (int x = 0; x < Plateau.SIZE_X; x++) {
+            for (int y = 0; y < Plateau.SIZE_Y; y++) {
+                Piece piece = plateau.getCases()[x][y].getPiece();
+                if (piece != null && piece.estBlanc() == joueurBlanc) {
+                    List<Case> accessibles = piece.getCasesAccessibles();
+                    if (!accessibles.isEmpty()) {
+                        return false; // au moins un coup légal => pas pat
+                    }
+                }
+            }
+        }
+        return true; // Aucun coup légal possible, pas en échec → pat
+    }
+    
 
 }

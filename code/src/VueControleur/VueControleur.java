@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -112,7 +113,7 @@ public class VueControleur extends JFrame implements Observer {
     
         this.add(panelPlateau, BorderLayout.CENTER);
     
-        // ✅ Ajuste la taille de la fenêtre au contenu
+        
         this.pack();
         this.setLocationRelativeTo(null); // centre la fenêtre
     }
@@ -170,32 +171,65 @@ public class VueControleur extends JFrame implements Observer {
     // Nouvelle méthode qui gère les clics
     private void caseClicked(int x, int y) {
         Case caseCliquee = plateau.getCases()[x][y];
-
+    
+       
+        reinitialiserCouleurs();
+    
         if (caseClic1 == null) {
-            // Premier clic : sélection d'une pièce
+           
             if (caseCliquee != null && caseCliquee.getPiece() != null) {
                 caseClic1 = caseCliquee;
+    
                 System.out.println("Sélectionné : " + caseCliquee.getPiece().getClass().getSimpleName() + " (" + x + "," + y + ")");
+    
+               
+                marquerCasesAccessibles(caseClic1);
             }
         } else {
-            // Deuxième clic : tentative de déplacement
+          
             caseClic2 = caseCliquee;
-
+    
             if (caseClic2 != null) {
                 jeu.envoyerCoup(new Coup(caseClic1, caseClic2));
                 System.out.println("Coup envoyé de " + caseClic1 + " à " + caseClic2);
             }
-
-            // Réinitialisation pour un nouveau tour
+    
+            
             caseClic1 = null;
             caseClic2 = null;
         }
     }
+    
 
     public void afficherTour(boolean estBlanc) {
         if (labelTour != null) {
             labelTour.setText("Tour des " + (estBlanc ? "Blancs" : "Noirs"));
         }
     }
+
+    private void marquerCasesAccessibles(Case caseDepart) {
+    List<Case> accessibles = caseDepart.getPiece().getCasesAccessibles();
+
+    for (Case c : accessibles) {
+        Point p = plateau.getPositionCase(c);
+        if (p != null) {
+            tabJLabel[p.x][p.y].setBackground(new Color(173, 255, 47)); // 💡 Vert clair
+        }
+    }
+}
+
+private void reinitialiserCouleurs() {
+    for (int y = 0; y < sizeY; y++) {
+        for (int x = 0; x < sizeX; x++) {
+            if ((y + x) % 2 == 0) {
+                tabJLabel[x][y].setBackground(new Color(150, 150, 210)); // clair
+            } else {
+                tabJLabel[x][y].setBackground(new Color(50, 50, 110)); // foncé
+            }
+        }
+    }
+}
+
+
     
 }

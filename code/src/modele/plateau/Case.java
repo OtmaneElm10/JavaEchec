@@ -28,12 +28,6 @@ public class Case {
     public Piece getPiece() {
         return p;
     }
-/*
-    public void setEntite(Piece _e) {
-
-        p = _e;
-
-    }*/
 
     public void setPiece(Piece _p) {
         this.p = _p;

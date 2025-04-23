@@ -13,7 +13,6 @@ import modele.jeu.Jeu;
     public static void main(String[] args) {
         Jeu jeu = new Jeu();
         VueControleur vc = new VueControleur(jeu);
-        jeu.setVue(vc); // lie le modèle à la vue
         vc.setVisible(true); // ← indispensable pour que la fenêtre apparaisse
     }
 }

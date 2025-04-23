@@ -17,6 +17,7 @@ public abstract class Piece {
     protected Plateau plateau;
     protected DecorateurCasesAccessibles casesAccessibles;
     protected boolean blanc ;
+    protected boolean aDejaBouge = false; //pour la fonction rock
 
     public Piece(Plateau _plateau , boolean _blanc) {
         plateau = _plateau;
@@ -54,6 +55,7 @@ public abstract class Piece {
     } else {
         return new ArrayList<>();
     }
+
 }
 
 

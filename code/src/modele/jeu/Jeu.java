@@ -3,20 +3,19 @@ package modele.jeu;
 import modele.plateau.Case;
 import modele.plateau.Plateau;
 import java.awt.Point;
-
-
 import java.util.List;
-
 import VueControleur.VueControleur;
 
 public class Jeu extends Thread {
-    private Plateau plateau;
-    private Joueur j1;
-    private Joueur j2;
-    private VueControleur vue;
-    protected Coup coupRecu;
-    private boolean tourBlanc = true; 
 
+    private Plateau plateau; // Le plateau de jeu contenant toutes les cases et pièces
+    private Joueur j1;       // Joueur 1
+    private Joueur j2;       // Joueur 2
+    private VueControleur vue; // Lien vers l’interface graphique (optionnel)
+    protected Coup coupRecu;   // Coup actuellement reçu pour traitement
+    private boolean tourBlanc = true; // Variable pour savoir à qui est le tour
+
+    // Constructeur du jeu : initialise le plateau, place les pièces et démarre le thread
     public Jeu() {
         plateau = new Plateau();
         plateau.placerPieces();
@@ -24,113 +23,114 @@ public class Jeu extends Thread {
         j1 = new Joueur(this);
         j2 = new Joueur(this);
 
-        start();
+        start(); // Lance le thread qui fait tourner la partie
     }
 
+    // Retourne le plateau de jeu
     public Plateau getPlateau() {
         return plateau;
     }
 
+    // Indique si c’est au tour du joueur blanc
     public boolean estTourBlanc() {
         return tourBlanc;
     }
 
+    // Reçoit un coup et notifie le thread principal pour qu’il le traite
     public void envoyerCoup(Coup c) {
         coupRecu = c;
 
         synchronized (this) {
-            notify();
+            notify(); // Réveille le thread de jeu qui attendait un coup
         }
 
         System.out.println("Coup reçu !");
     }
 
+    // Applique un coup s’il est valide
     public void appliquerCoup(Coup coup) {
         Piece pieceDeplacee = coup.dep.getPiece();
-    
+
         if (pieceDeplacee != null) {
-            // 1. Vérifie le tour du joueur
+            // Vérifie si la pièce appartient au joueur qui doit jouer
             if (pieceDeplacee.estBlanc() != tourBlanc) {
                 System.out.println("Ce n'est pas ton tour !");
                 return;
             }
-    
-            // 2. Vérifie que le coup est autorisé
+
+            // Récupère les cases que cette pièce peut atteindre
             List<Case> casesPossibles = pieceDeplacee.casesAccessibles.getCasesAccessibles();
+
             if (casesPossibles.contains(coup.arr)) {
-                // 3. Sauvegarde l'état
+                // On sauvegarde l’état avant d’essayer
                 Case caseDepart = coup.dep;
                 Case caseArrivee = coup.arr;
                 Piece pieceCapturee = caseArrivee.getPiece();
-    
-                // 4. Applique temporairement le coup
-                caseDepart.quitterLaCase(); // enlève la pièce
-                caseArrivee.setPiece(pieceDeplacee); // met la pièce sur la nouvelle case
+
+                // Déplacement temporaire pour vérifier l’échec
+                caseDepart.quitterLaCase();
+                caseArrivee.setPiece(pieceDeplacee);
                 pieceDeplacee.allerSurCase(caseArrivee);
-    
-                // 5. Vérifie si le roi est en échec
+
+                // Si le roi est en échec après ce coup, on l'annule
                 boolean estEchec = estEnEchec(pieceDeplacee.estBlanc());
-    
                 if (estEchec) {
-                    // Annule le coup
                     caseArrivee.quitterLaCase();
                     caseDepart.setPiece(pieceDeplacee);
                     pieceDeplacee.allerSurCase(caseDepart);
                     if (pieceCapturee != null) {
                         caseArrivee.setPiece(pieceCapturee);
                     }
-    
+
                     System.out.println("Coup interdit : vous restez en échec !");
                 } else {
-                    //Coup valide : applique réellement le coup
+                    // Si pas d’échec, on applique réellement le déplacement
                     plateau.deplacerPiece(caseDepart, caseArrivee);
-                    changerTour(); // alterne entre tourBlanc = true/false
-                    if (estEgalite(tourBlanc)) {
-                        if (vue != null) {
-                            vue.afficherMessage("Égalité (pat) !");
-                        } else {
-                            System.out.println("Égalité (pat) !");
-                        }
-                    }
-                    
+
+                    // On change le tour
+                    changerTour();
+
+                    // Message console
                     System.out.println("Coup joué !");
+
+                    // Vérifie s'il y a égalité (pat)
+                    if (estEgalite(tourBlanc)) {
+                        System.out.println("Égalité (pat) !");
+                        // Ici on pourrait appeler une méthode vue.afficherMessage(...)
+                    }
                 }
             } else {
                 System.out.println("Coup invalide !");
             }
         }
     }
-    
-    
-    
-    
+
+    // Boucle principale du thread : attend et joue des coups en boucle
     public void run() {
         jouerPartie();
     }
 
     public void jouerPartie() {
         while (true) {
-            Coup c = j1.getCoup();
-            appliquerCoup(c);
+            Coup c = j1.getCoup(); // Récupère le prochain coup
+            appliquerCoup(c);      // Tente de l’appliquer
         }
     }
 
+    // Inverse le tour et notifie la vue
     private void changerTour() {
         tourBlanc = !tourBlanc;
-        plateau.setChanged(); // 
-        plateau.notifyObservers(tourBlanc); 
+        plateau.setChanged();
+        plateau.notifyObservers(tourBlanc);
     }
 
-    private boolean caseEstAttaquee(Point position, boolean verif) {
-
+    // Vérifie si une case est attaquée par une pièce adverse
+    private boolean caseEstAttaquee(Point position, boolean parBlanc) {
         for (int x = 0; x < Plateau.SIZE_X; x++) {
             for (int y = 0; y < Plateau.SIZE_Y; y++) {
-
                 Piece p = plateau.getCases()[x][y].getPiece();
-                if (p != null && p.estBlanc() == verif) {
-
-                    if (p.casesAccessibles.getCasesAccessibles().contains(plateau.getCases()[position.x][position.y])) 
-                    {
+                if (p != null && p.estBlanc() == parBlanc) {
+                    if (p.casesAccessibles.getCasesAccessibles().contains(plateau.getCases()[position.x][position.y])) {
                         return true;
                     }
                 }
@@ -138,30 +138,22 @@ public class Jeu extends Thread {
         }
         return false;
     }
-    
 
-    public boolean estEnEchec(boolean est_roi) {
+    // Vérifie si le roi d'une couleur est en échec
+    public boolean estEnEchec(boolean estBlanc) {
+        Roi roi = trouverRoi(estBlanc);
+        if (roi == null) return false;
 
-        Roi roi = trouverRoi(est_roi);
-        if (roi == null) {
-
-            return false; // probleme 
-        }
-        
         Point positionRoi = plateau.getPositionCase(roi.getCase());
-        return caseEstAttaquee(positionRoi, !est_roi); 
+        return caseEstAttaquee(positionRoi, !estBlanc);
     }
-    
+
+    // Cherche et retourne le roi d'une couleur
     private Roi trouverRoi(boolean estBlanc) {
-
         for (int x = 0; x < Plateau.SIZE_X; x++) {
-
             for (int y = 0; y < Plateau.SIZE_Y; y++) {
-
                 Piece p = plateau.getCases()[x][y].getPiece();
-
                 if (p instanceof Roi && p.estBlanc() == estBlanc) {
-
                     return (Roi) p;
                 }
             }
@@ -169,27 +161,21 @@ public class Jeu extends Thread {
         return null;
     }
 
-    public void setVue(VueControleur vue) {
-        this.vue = vue;
-    }
 
+    // Vérifie s’il y a égalité (pat)
     public boolean estEgalite(boolean joueurBlanc) {
-        if (estEnEchec(joueurBlanc)) return false; // pas une égalité si en échec
-    
-        // Parcourt toutes les pièces du joueur
+        if (estEnEchec(joueurBlanc)) return false;
+
         for (int x = 0; x < Plateau.SIZE_X; x++) {
             for (int y = 0; y < Plateau.SIZE_Y; y++) {
                 Piece piece = plateau.getCases()[x][y].getPiece();
                 if (piece != null && piece.estBlanc() == joueurBlanc) {
                     List<Case> accessibles = piece.getCasesAccessibles();
-                    if (!accessibles.isEmpty()) {
-                        return false; // au moins un coup légal => pas pat
-                    }
+                    if (!accessibles.isEmpty()) return false;
                 }
             }
         }
-        return true; // Aucun coup légal possible, pas en échec → pat
-    }
-    
 
+        return true; // Aucun coup possible, pas en échec => pat
+    }
 }

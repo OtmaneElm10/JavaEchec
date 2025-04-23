@@ -1,5 +1,8 @@
 package modele.jeu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import modele.plateau.Case;
 import modele.plateau.DecorateurCasesAccessibles;
 import modele.plateau.Direction;
@@ -44,6 +47,14 @@ public abstract class Piece {
     public Case getCase() {
         return c;
     }
+
+    public List<Case> getCasesAccessibles() {
+    if (casesAccessibles != null) {
+        return casesAccessibles.getCasesAccessibles();
+    } else {
+        return new ArrayList<>();
+    }
+}
 
 
 

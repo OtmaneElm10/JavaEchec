@@ -119,5 +119,11 @@ public void arriverCase(Case c, Piece p) {
         return retour;
     }
 
+    @Override
+public synchronized void setChanged() {
+    super.setChanged(); // appelle la méthode protégée d'Observable
+}
+
+
 
 }

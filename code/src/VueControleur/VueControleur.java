@@ -20,6 +20,9 @@ import modele.jeu.Piece;
 import modele.jeu.Coup; // N'oublie pas d'importer Coup si pas déjà
 import modele.plateau.Case;
 import modele.plateau.Plateau;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 
 public class VueControleur extends JFrame implements Observer {
     private Plateau plateau;
@@ -31,6 +34,8 @@ public class VueControleur extends JFrame implements Observer {
     private Case caseClic1;
     private Case caseClic2;
     private JLabel[][] tabJLabel;
+    private JLabel labelTour;
+
 
     public VueControleur(Jeu jeu) {
         this.jeu = jeu;
@@ -60,43 +65,60 @@ public class VueControleur extends JFrame implements Observer {
     private void placerLesComposantsGraphiques() {
         this.setTitle("Jeu d'Échecs");
         this.setResizable(false);
-        this.setSize(this.sizeX * pxCase, this.sizeY * pxCase);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setLayout(new BorderLayout());
     
-        JPanel panel = new JPanel(new GridLayout(this.sizeY, this.sizeX));
-        this.tabJLabel = new JLabel[this.sizeX][this.sizeY];
+        // 🔷 Label d'affichage du tour
+        labelTour = new JLabel("Tour des Blancs", JLabel.CENTER);
+        labelTour.setOpaque(true);
+        labelTour.setBackground(new Color(30, 30, 30));
+        labelTour.setForeground(Color.WHITE);
+        labelTour.setFont(labelTour.getFont().deriveFont(16f));
+        labelTour.setPreferredSize(new Dimension(sizeX * pxCase, 30));
+        this.add(labelTour, BorderLayout.NORTH);
     
-        for (int y = 0; y < this.sizeY; y++) {
-            for (int x = 0; x < this.sizeX; x++) {
+        // 🔷 Plateau de jeu
+        JPanel panelPlateau = new JPanel(new GridLayout(sizeY, sizeX));
+        this.tabJLabel = new JLabel[sizeX][sizeY];
+    
+        for (int y = 0; y < sizeY; y++) {
+            for (int x = 0; x < sizeX; x++) {
                 JLabel label = new JLabel();
-                this.tabJLabel[x][y] = label;
+                tabJLabel[x][y] = label;
     
                 label.setOpaque(true);
-                label.setFocusable(false); // Évite que le JLabel vole le focus clavier
+                label.setFocusable(false);
                 label.setHorizontalAlignment(JLabel.CENTER);
+                label.setPreferredSize(new Dimension(pxCase, pxCase)); // ✅ taille forcée
     
-                // Meilleur gestionnaire de clic
                 int finalX = x;
                 int finalY = y;
                 label.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mousePressed(MouseEvent e) {
-                        caseClicked(finalX, finalY); // 💥 Plus fiable que mouseClicked
+                        caseClicked(finalX, finalY);
                     }
                 });
     
-                if ((y % 2 != 0 || x % 2 != 0) && (y % 2 == 0 || x % 2 == 0)) {
+                if ((y + x) % 2 == 0) {
                     label.setBackground(new Color(150, 150, 210)); // clair
                 } else {
                     label.setBackground(new Color(50, 50, 110)); // foncé
                 }
     
-                panel.add(label);
+                panelPlateau.add(label);
             }
         }
     
-        this.add(panel);
+        this.add(panelPlateau, BorderLayout.CENTER);
+    
+        // ✅ Ajuste la taille de la fenêtre au contenu
+        this.pack();
+        this.setLocationRelativeTo(null); // centre la fenêtre
     }
+    
+    
+    
     
 
     private void mettreAJourAffichage() {
@@ -118,7 +140,11 @@ public class VueControleur extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         this.mettreAJourAffichage();
+        if (arg instanceof Boolean) {
+            afficherTour((Boolean) arg);
+        }
     }
+    
 
     private ImageIcon getIconForPiece(Piece p) {
         String color = p.estBlanc() ? "w" : "b";
@@ -165,4 +191,11 @@ public class VueControleur extends JFrame implements Observer {
             caseClic2 = null;
         }
     }
+
+    public void afficherTour(boolean estBlanc) {
+        if (labelTour != null) {
+            labelTour.setText("Tour des " + (estBlanc ? "Blancs" : "Noirs"));
+        }
+    }
+    
 }
